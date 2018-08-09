@@ -199,7 +199,43 @@
           </dependency>
         </dependencies>
       </plugin>
+        <!-- Maven Plugin for Azure Web Apps -->
+        <plugin>
+            <groupId>com.microsoft.azure</groupId>
+            <artifactId>azure-webapp-maven-plugin</artifactId>
+            <version>1.2.0</version>
+            <configuration>
+
+                <!-- Web App information -->
+                <resourceGroup>[resource-group-placeholder]</resourceGroup>
+                <appName>[app-name-placeholder]</appName>
+                <region>[region-placeholder]</region>
+                <pricingTier>S1</pricingTier>
+
+                <!-- Java Runtime Stack for Web App on Linux -->
+                <linuxRuntime>jre8</linuxRuntime>
+
+                <deploymentType>ftp</deploymentType>
+                <!-- Resources to be deployed to your Web App -->
+                <resources>
+                    <resource>
+                        <directory>${project.basedir}/target</directory>
+                        <targetPath>/</targetPath>
+                        <includes>
+                            <include>app.jar</include>
+                        </includes>
+                    </resource>
+                </resources>
+                <appSettings>
+                    <property>
+                        <name>JAVA_OPTS</name>
+                        <value>-Djava.security.egd=file:/dev/./urandom</value>
+                    </property>
+                </appSettings>
+            </configuration>
+        </plugin>
     </plugins>
+      <finalName>app</finalName>
   </build>
   <reporting>
     <plugins>
