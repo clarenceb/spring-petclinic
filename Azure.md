@@ -40,7 +40,7 @@ Build, package and deploy the app:
 mvn clean package azure-webapp:deploy
 ```
 
-Access the app via the return URL (http not https).
+Access the app via the returned URL, i.e. `https://[appname].azurewebsites.net`
 
 e.g. 
 
