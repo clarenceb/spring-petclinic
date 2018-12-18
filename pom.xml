@@ -14,7 +14,7 @@
   </parent>
   <name>petclinic</name>
 
-  <!-- Package as a WAR for Tomcat deployment -->
+  <!-- Package as a WAR for Tomcat/Wildfly deployment -->
   <!-- <packaging>war</packaging> -->
 
   <properties>
@@ -112,7 +112,8 @@
       <optional>true</optional>
     </dependency>
 
-    <!-- Tomcat -->
+    <!-- Tomcat (embedded web server) -->
+    <!-- You can also use Jetty or Undertow, see: http://www.springboottutorial.com/spring-boot-with-embedded-servers-tomcat-jetty -->
     <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-tomcat</artifactId>
