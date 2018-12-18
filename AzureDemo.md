@@ -168,3 +168,4 @@ az acr repository show-tags --name aksdemos --repository spring-petclinic --outp
 
 ```sh
 az ad sp create-for-rbac -n aks-demos --skip-assignment
+```

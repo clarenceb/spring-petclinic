@@ -22,13 +22,13 @@ LABEL maintainer="demouser@example.com"
 EXPOSE 8080
 
 # The application's jar file
-ARG JAR_FILE=target/spring-petclinic-2.1.0.BUILD-SNAPSHOT.jar
+ARG JAR_FILE=/usr/src/app/target/spring-petclinic-2.1.0.BUILD-SNAPSHOT.jar
 
 # Database
 ENV DB_HOST=localhost
 
 # Add the application's jar to the container
-COPY --from=build /usr/src/app/target/${JAR_FILE} /app.jar
+COPY --from=build ${JAR_FILE} /app.jar
 
 # Run the jar file
 # (Avoid JVM delays caused by random number generation)
