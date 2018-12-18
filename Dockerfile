@@ -25,7 +25,9 @@ EXPOSE 8080
 ARG JAR_FILE=/usr/src/app/target/spring-petclinic-2.1.0.BUILD-SNAPSHOT.jar
 
 # Database
-ENV DB_HOST=localhost
+ENV DB_URL=jdbc:mysql://localhost/petclinic
+ENV DB_USER=petclinic
+ENV DB_PASSORD=petclinic
 
 # Add the application's jar to the container
 COPY --from=build ${JAR_FILE} /app.jar
@@ -35,4 +37,4 @@ COPY --from=build ${JAR_FILE} /app.jar
 # ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-Dspring.profiles.active=mysql","-Dspring.datasource.url=jdbc:mysql://$DB_HOST/petclinic","-jar","/app.jar"]
 
 # Workaround for DB not ready in time for app - your code should handle this!
-ENTRYPOINT until nc -z $DB_HOST 3306; do sleep 1; echo "Waiting for DB to come up..."; done && java -Djava.security.egd=file:/dev/./urandom -Dspring.profiles.active=mysql -Dspring.datasource.url=jdbc:mysql://$DB_HOST/petclinic -jar /app.jar
+ENTRYPOINT until nc -z $DB_HOST 3306; do sleep 1; echo "Waiting for DB to come up..."; done && java -Djava.security.egd=file:/dev/./urandom -Dspring.profiles.active=mysql -Dspring.datasource.url=$DB_URL -Dspring.datasource.username=$DB_USER -Dspring.datasource.password=$DB_PASSWORD -jar /app.jar

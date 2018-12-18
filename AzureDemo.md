@@ -112,6 +112,12 @@ docker-compose down
 
 ### Run as Docker containers on Azure Kubernetes Service (AKS)
 
+#### Prerequisites
+
+* Azure Subscription
+* Azure CLI installed
+* Kubernetes CLI (kubectl) installed
+
 #### Create a common resource group for the resources
 
 ```sh
@@ -164,8 +170,106 @@ az acr repository list --name aksdemos --output table
 az acr repository show-tags --name aksdemos --repository spring-petclinic --output table
 ```
 
-#### Create a cluster
+#### Setup an AKS cluster
 
 ```sh
-az ad sp create-for-rbac -n aks-demos --skip-assignment
+# Configure ACR authentication for AKS cluster
+az ad sp create-for-rbac --name http://aks-demos --skip-assignment
+# Note down the appId and clientSecret for later
+APP_ID=<appId>
+CLIENT_SECRET=<clientSecret>
+az acr show --resource-group aks-demos --name aksdemos --query "id" --output tsv
+az role assignment create --assignee <appId> --scope <acrId> --role Reader
 ```
+
+```sh
+# Create the cluster
+az aks create -n aksdemocluster -g aks-demos \
+-k 1.11.4 \
+--service-principal $APP_ID \
+--client-secret $CLIENT_SECRET \
+--generate-ssh-keys \
+-l australiaeast \
+--node-count 3 \
+--enable-addons http_application_routing,monitoring
+
+az aks list -o table
+
+az aks get-credentials -n aksdemocluster -g aks-demos
+
+kubectl get nodes
+kubectl cluster-info
+```
+
+#### Create a deployment for the app
+
+```sh
+cd kubernetes
+
+```
+
+#### Expose app via a service
+
+#### Create MySQL data for the service
+
+From the Azure Portal, create a new resource of type `Azure Database for MySQL`.
+
+Sample values:
+
+* Server name: spring-petclinic
+* Subscription: <your-subscription>
+* Resource Group: aks-demos
+* Server admin name: sadmin
+* Password: <your-password>
+* Location: Australia East
+* Version: 5.7
+* Pricing Tier: Basic
+
+Note:
+
+* This whole piece can be automated with ARM Templates, Terraform, etc.
+* You could also use Open Service Broker for Azure to provision a database
+
+Access the database resource in the portal.
+
+Go to **Connection Security**
+
+* Click 'Add client IP' so your machine can access the DB to load the schmema and data
+* Enable 'Allow access to Azure services' for our app to work
+* Click 'Save'
+
+Go to **Connection strings**
+
+* Copy the **JDBC** connection string
+
+```
+# JDBC connection string
+jdbc:mysql://spring-petclinic.mysql.database.azure.com:3306/petclinic?useSSL=true&requireSSL=false
+```
+
+Create database, schema, initial data:
+
+```sh
+```
+
+#### Create a database connection string secret
+
+TODO: Update the spring properties / env var to use full connection string (Dockerfile too)
+
+#### Configure app to use connection string secret
+
+#### Setup ingress controller
+
+#### Create ingress resource
+
+#### Set up TLS certs
+
+#### Logging/Monitoring/Metrics
+
+#### Rolling updates
+
+TODO: push a v2 image with a change
+
+#### Add readiness and healthcheck probes
+
+#### Rolling updates, again...
