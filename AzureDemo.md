@@ -83,10 +83,10 @@ sudo service mysql stop
 
 #### Standlone JAR (embedded Tomcat server)
 
-Build the application container:
+Build the application container image:
 
 ```sh
-docker build -t spring-petclinic .
+docker build -t spring-petclinic -f Dockerfile.dev .
 ```
 
 Start the application and mysql cointainers via `docker-compose`:
@@ -109,3 +109,62 @@ Clean up container resources:
 ```sh
 docker-compose down
 ```
+
+### Run as Docker containers on Azure Kubernetes Service (AKS)
+
+#### Create a common resource group for the resources
+
+```sh
+az group create --name aks-demos --location australiaeast
+```
+
+#### Create a Azure Container Registry (ACR)
+
+```sh
+az acr create --resource-group aks-demos --name aksdemos --sku Basic
+az acr login --name aksdemos
+#==> Login Succeeded
+```
+
+#### Tag and push the Docker image to ACR
+
+*If you have limited upload bandwidth, follow steps in **Remote build and tag with ACR build** instead*
+
+```sh
+az acr list --resource-group aks-demos --query "[].{acrLoginServer:loginServer}" --output table
+#==> AcrLoginServer
+#==> -------------------
+#==> aksdemos.azurecr.io
+```
+
+```sh
+docker tag spring-petclinic:latest aksdemos.azurecr.io/spring-petclinic:v1
+docker images
+#==> REPOSITORY                            TAG     IMAGE ID      ...
+#==> aksdemos.azurecr.io/spring-petclinic  v1      b0ed077cb2b2  ...
+#==> spring-petclinic                      latest  b0ed077cb2b2  ...
+```
+
+```sh
+docker push aksdemos.azurecr.io/spring-petclinic:v1
+```
+
+#### Remote build and tag with ACR build
+
+*Use this method to avoid uploading image layers and utilise ACR to build the image for you using a multi-stage Docker build*
+
+```
+az acr build --registry aksdemos --resource-group aks-demos --image aksdemos.azurecr.io/spring-petclinic:v1 https://github.com/clarenceb/spring-petclinic.git
+```
+
+#### Verify Docker repository and tags
+
+```sh
+az acr repository list --name aksdemos --output table
+az acr repository show-tags --name aksdemos --repository spring-petclinic --output table
+```
+
+#### Create a cluster
+
+```sh
+az ad sp create-for-rbac -n aks-demos --skip-assignment

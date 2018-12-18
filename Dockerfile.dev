@@ -1,18 +1,5 @@
-## Multi-stage build
-## =================
+## Dev version, uses local target
 
-# Build stage (maven tools, JDK8, etc.)
-# -------------------------------------
-FROM maven:3.6-jdk-8-alpine as build
-
-COPY src /usr/src/app/src
-COPY pom.xml /usr/src/app
-COPY sonar-project.properties /usr/src/app
-
-RUN mvn -f /usr/src/app/pom.xml clean package
-
-# Final stage (runtime distribution)
-# -------------------------------------
 FROM openjdk:8-jdk-alpine
 
 # Add Maintainer Info
@@ -28,7 +15,7 @@ ARG JAR_FILE=target/spring-petclinic-2.1.0.BUILD-SNAPSHOT.jar
 ENV DB_HOST=localhost
 
 # Add the application's jar to the container
-COPY --from=build /usr/src/app/target/${JAR_FILE} /app.jar
+ADD ${JAR_FILE} /app.jar
 
 # Run the jar file
 # (Avoid JVM delays caused by random number generation)
