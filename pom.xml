@@ -15,7 +15,7 @@
   <name>petclinic</name>
 
   <!-- Package as a WAR for Tomcat deployment -->
-  <packaging>war</packaging>
+  <!-- <packaging>war</packaging> -->
 
   <properties>
 
