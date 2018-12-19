@@ -6,6 +6,7 @@ services:
     ports:
       - "8080:8080"
     environment:
+      - DB_HOST=localhost
       - DB_URL=jdbc:mysql://localhost/petclinic
       - DB_USER=petclinic
       - DB_PASSORD=petclinic

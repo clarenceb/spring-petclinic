@@ -18,6 +18,11 @@ spec:
         ports:
         - containerPort: 8080
         env:
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: petclinic-db-conn
+              key: db_host
         - name: DB_URL
           valueFrom:
             secretKeyRef:

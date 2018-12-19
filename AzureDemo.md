@@ -117,6 +117,7 @@ docker-compose down
 * Azure Subscription
 * Azure CLI installed
 * Kubernetes CLI (kubectl) installed
+* Helm CLI installed and Tiller installed in cluster
 
 #### Create a common resource group for the resources
 
@@ -289,6 +290,23 @@ valueFrom:
 
 
 #### Setup ingress controller
+
+Since we use Helm, you'll need to install the Helm CLI and initialise Tiller in the cluster for RBAC.
+
+```sh
+helm install stable/nginx-ingress --namespace kube-system --set controller.replicaCount=2
+kubectl get service -l app=nginx-ingress --namespace kube-system
+# Note down the EXTERNAL-IP for later
+```
+
+Configure DNS name for the ingress endpoint:
+
+```sh
+./kubernetes/assign-ingress-dnsname.sh <external-api> <domain-name>
+# e.g. ./kubernetes/assign-ingress-dnsname.sh 13.68.201.122 aksdemos
+```
+
+The ingress controller is now accessible through the FQDN: `<domain-name>.<region>.cloudapp.azure.com`
 
 #### Create ingress resource
 

@@ -25,6 +25,7 @@ EXPOSE 8080
 ARG JAR_FILE=/usr/src/app/target/spring-petclinic-2.1.0.BUILD-SNAPSHOT.jar
 
 # Database
+ENV DB_HOST=localhost
 ENV DB_URL=jdbc:mysql://localhost/petclinic
 ENV DB_USER=petclinic
 ENV DB_PASSORD=petclinic
