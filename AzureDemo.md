@@ -128,7 +128,7 @@ az group create --name aks-demos --location australiaeast
 
 ```sh
 az acr create --resource-group aks-demos --name aksdemos --sku Basic
-az acr login --name aksdemos
+az acr login --name aksdemos -g aks-demos
 #==> Login Succeeded
 ```
 
@@ -201,15 +201,6 @@ kubectl get nodes
 kubectl cluster-info
 ```
 
-#### Create a deployment for the app
-
-```sh
-cd kubernetes
-
-```
-
-#### Expose app via a service
-
 #### Create MySQL data for the service
 
 From the Azure Portal, create a new resource of type `Azure Database for MySQL`.
@@ -249,14 +240,53 @@ jdbc:mysql://spring-petclinic.mysql.database.azure.com:3306/petclinic?useSSL=tru
 
 Create database, schema, initial data:
 
+Create database, user and grants:
+
 ```sh
+mysql --protocol tcp -h spring-petclinic.mysql.database.azure.com -u sadmin@spring-petclinic -p
+
+mysql> CREATE DATABASE petclinic;
+mysql> GRANT ALL PRIVILEGES ON petclinic.* TO 'sadmin'@'spring-petclinic' IDENTIFIED BY 'petclinic';
+mysql> FLUSH PRIVILEGES;
+mysql> exit;
 ```
 
-#### Create a database connection string secret
+```sh
+mysql --protocol tcp -h spring-petclinic.mysql.database.azure.com -u sadmin@spring-petclinic -Dpetclinic -p < src/main/resources/db/mysql/schema.sql
+mysql --protocol tcp -h spring-petclinic.mysql.database.azure.com -u sadmin@spring-petclinic -Dpetclinic -p < src/main/resources/db/mysql/data.sql
+```
+
+#### Create a database connection secrets
 
 TODO: Update the spring properties / env var to use full connection string (Dockerfile too)
 
-#### Configure app to use connection string secret
+```sh
+kubectl create secret generic petclinic-db-conn --from-literal="db_url=jdbc:mysql://spring-petclinic.mysql.database.azure.com:3306/petclinic?useSSL=true&requireSSL=false" --from-literal="db_user=sadmin@spring-petclinic" --from-literal="db_password=<your_password>"
+
+kubectl describe secret petclinic-db-conn
+```
+
+#### Deploy app using db connection secret
+
+```sh
+kubectl apply -f kubernetes/spring-petclinic.deploy.yaml
+kubectl get pod,deploy
+```
+
+The deployment manifest references the secret keys as enviornment variables in the container:
+
+```yaml
+...snip...
+env:
+- name: DB_URL
+valueFrom:
+    secretKeyRef:
+    name: petclinic-db-conn
+    key: db_url
+```
+
+#### Create a service to expose the app
+
 
 #### Setup ingress controller
 
