@@ -1,0 +1,24 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: spring-petclinic-lb-svc
+spec:
+  type: LoadBalancer
+  ports:
+  - protocol: TCP
+    port: 8080
+  selector:
+    app: spring-petclinic
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: spring-petclinic-clusterip-svc
+spec:
+  type: ClusterIP
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080
+  selector:
+    app: spring-petclinic

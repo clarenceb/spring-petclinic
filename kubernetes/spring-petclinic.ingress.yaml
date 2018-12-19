@@ -17,5 +17,5 @@ spec:
       paths:
       - path: /
         backend:
-          serviceName: spring-petclinic
+          serviceName: spring-petclinic-clusterip-svc
           servicePort: 8080

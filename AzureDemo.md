@@ -298,7 +298,15 @@ Press `CTRL+C` to stop port forwarding.
 
 #### Create a service to expose the app
 
+```sh
+kubectl apply -f kubernetes/spring-petclinic.svc.yaml
+kubectl get svc
+```
 
+There are two services created:
+
+1) Exposed via a LoadBalancer
+2) Exposed via ClusterIP (for Ingress user later)
 
 #### Setup ingress controller
 
@@ -329,12 +337,56 @@ kubectl apply -f certificates.yaml
 
 #### Create ingress resource
 
+```sh
+kubectl apply -f kubernetes/spring-petclinic.ingress.yaml
+kubectl get ingress
+```
+
+#### Scaling pods
+
+```sh
+kubectl scale --replicas=4 deployment/spring-petclinic
+kubectl get pods
+```
+
+You can also edit the deployment manifest and apply it again.
+
 #### Logging/Monitoring/Metrics
+
+TODO
 
 #### Rolling updates
 
-TODO: push a v2 image with a change
+```sh
+kubectl set image deployment spring-petclinic spring-petclinic=aksdemos.azurecr.io/spring-petclinic:v2
+kubectl get pods -w
+# CTRL-C to stop watching
+```
+
+Try accessing the site while the pods are updated in the deployment.
+
+TODO - Update strategy, max surge, max unavailable
 
 #### Add readiness and healthcheck probes
 
+TODO
+
 #### Rolling updates, again...
+
+TODO - after adding readiness/health probes
+
+#### Cleanup app
+
+```sh
+kubectl delete deploy/spring-petclinic
+kubectl delete svc/spring-petclinic-lb-svc
+kubectl delete svc/spring-petclinic-clusterip-svc
+```
+
+#### Cleanup ingress, ingress controller, cert manager
+
+TODO
+
+#### Delete Azure resources
+
+TODO - AKS, ACR
