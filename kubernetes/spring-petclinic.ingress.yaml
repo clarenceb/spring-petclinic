@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: aks-demos-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    certmanager.k8s.io/cluster-issuer: letsencrypt-staging
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  tls:
+  - hosts:
+    - aksdemos.eastus.cloudapp.azure.com
+    secretName: tls-secret
+  rules:
+  - host: aksdemos.eastus.cloudapp.azure.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: spring-petclinic
+          servicePort: 8080

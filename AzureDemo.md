@@ -262,7 +262,7 @@ mysql --protocol tcp -h spring-petclinic.mysql.database.azure.com -u sadmin@spri
 TODO: Update the spring properties / env var to use full connection string (Dockerfile too)
 
 ```sh
-kubectl create secret generic petclinic-db-conn --from-literal="db_url=jdbc:mysql://spring-petclinic.mysql.database.azure.com:3306/petclinic?useSSL=true&requireSSL=false" --from-literal="db_user=sadmin@spring-petclinic" --from-literal="db_password=<your_password>"
+kubectl create secret generic petclinic-db-conn --from-literal="db_host=spring-petclinic.mysql.database.azure.com" --from-literal="db_url=jdbc:mysql://spring-petclinic.mysql.database.azure.com:3306/petclinic?useSSL=true&requireSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC" --from-literal="db_user=sadmin@spring-petclinic" --from-literal="db_password=<your-password>"
 
 kubectl describe secret petclinic-db-conn
 ```
@@ -286,7 +286,18 @@ valueFrom:
     key: db_url
 ```
 
+Connect to pod directly via port forwarding:
+
+```sh
+kubectl port-forward spring-petclinic-557bbdbfb6-vhqk5 8080:8080
+```
+
+Access the website: http://localhost:8080
+
+Press `CTRL+C` to stop port forwarding.
+
 #### Create a service to expose the app
+
 
 
 #### Setup ingress controller
@@ -308,9 +319,15 @@ Configure DNS name for the ingress endpoint:
 
 The ingress controller is now accessible through the FQDN: `<domain-name>.<region>.cloudapp.azure.com`
 
-#### Create ingress resource
+#### Set up Certificate Manager for TLS endpoints via Ingress
 
-#### Set up TLS certs
+```sh
+helm install stable/cert-manager --namespace kube-system --set ingressShim.defaultIssuerName=letsencrypt-staging --set ingressShim.defaultIssuerKind=ClusterIssuer
+kubectl apply -f kubernetes/cluster-issuer.yaml
+kubectl apply -f certificates.yaml
+```
+
+#### Create ingress resource
 
 #### Logging/Monitoring/Metrics
 
