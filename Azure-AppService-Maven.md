@@ -1,4 +1,4 @@
-# Azure Demo
+# Azure AppService Deployment via Maven Plugin
 
 ## Overview
 
