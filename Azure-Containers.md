@@ -81,6 +81,8 @@ sudo service mysql stop
 
 ### Run as Docker containers locally
 
+TODO
+
 #### Standlone JAR (embedded Tomcat server)
 
 Build the application container image:
@@ -109,6 +111,10 @@ Clean up container resources:
 ```sh
 docker-compose down
 ```
+
+### Deploy to WebApp for Containers (Azure App Service)
+
+
 
 ### Run as Docker containers on Azure Kubernetes Service (AKS)
 

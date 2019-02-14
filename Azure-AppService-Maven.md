@@ -6,9 +6,9 @@ Builds a WAR file for the SpringBoot PetClinic app and deploys to Azure App Serv
 
 ## Prerequisites
 
-* Install the Azure CLI 2.0
+* Install the [Azure CLI 2.0](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
 
-You'll need an Azure subscription and you must have configured your credentials by logging in:
+You'll need an [Azure subscription](https://azure.microsoft.com/en-us/free/) and you must have configured the Azure CLI with your credentials by logging in:
 
 ```sh
 az login
@@ -29,7 +29,13 @@ Edit the Maven `pom.xml` file and fill in the Azure App Service info:
 <resourceGroup>[resource-group-placeholder]</resourceGroup>
 <appName>[app-name-placeholder]</appName>
 <region>[region-placeholder]</region>
-<pricingTier>S1</pricingTier>
+<pricingTier>[pricing-tier-placeholder]</pricingTier>
+```
+
+Or pass in properties to Maven via command-line:
+
+```sh
+mvn clean package azure-webapp:deploy -Dapp.name=javademo456
 ```
 
 ## Deploy to Azure App Services
@@ -37,7 +43,7 @@ Edit the Maven `pom.xml` file and fill in the Azure App Service info:
 Build, package and deploy the app:
 
 ```sh
-mvn clean package azure-webapp:deploy
+mvn clean package azure-webapp:deploy -Dapp.name=javademo456
 ```
 
 Access the app via the returned URL, i.e. `https://[appname].azurewebsites.net`
@@ -45,6 +51,12 @@ Access the app via the returned URL, i.e. `https://[appname].azurewebsites.net`
 e.g. 
 
 ## Test web app locally
+
+Build the WAR file:
+
+```sh
+mvn clean package
+```
 
 Download Tomcat for your OS from https://tomcat.apache.org/download-80.cgi
 

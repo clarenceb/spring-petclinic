@@ -15,7 +15,7 @@
   <name>petclinic</name>
 
   <!-- Package as a WAR for Tomcat/Wildfly deployment -->
-  <!-- <packaging>war</packaging> -->
+  <packaging>war</packaging>
 
   <properties>
 
@@ -31,6 +31,12 @@
     <wro4j.version>1.8.0</wro4j.version>
 
     <jacoco.version>0.8.2</jacoco.version>
+
+    <!-- Azure App Service -->
+    <app.resourcegroup>javademo</app.resourcegroup>
+    <app.name>javademo</app.name>
+    <app.region>australiaeast</app.region>
+    <app.pricingtier>S1</app.pricingtier>
 
   </properties>
 
@@ -218,6 +224,7 @@
           </dependency>
         </dependencies>
       </plugin>
+
         <!-- Maven Plugin for Azure Web Apps -->
         <plugin>
             <groupId>com.microsoft.azure</groupId>
@@ -226,10 +233,10 @@
             <configuration>
 
                 <!-- Web App information -->
-                <resourceGroup>[resource-group-placeholder]</resourceGroup>
-                <appName>[app-name-placeholder]</appName>
-                <region>[region-placeholder]</region>
-                <pricingTier>S1</pricingTier>
+                <resourceGroup>${app.resourcegroup}</resourceGroup>
+                <appName>${app.name}</appName>
+                <region>${app.region}</region>
+                <pricingTier>${app.pricingtier}</pricingTier>
 
                 <!-- Tomcat with JRE8 for Web App on Linux -->
                 <linuxRuntime>tomcat 8.5-jre8</linuxRuntime>
@@ -250,6 +257,7 @@
                 </resources>
             </configuration>
         </plugin>
+        
     </plugins>
 
   </build>
