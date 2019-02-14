@@ -16,6 +16,7 @@ cd spring-petclinic
 ### Run app locally with HSQL
 
 ```sh
+# Change packaging in pom.xml to jar: <packaging>jar</packaging>
 ./mvnw package
 java -jar target/*.jar
 ```
